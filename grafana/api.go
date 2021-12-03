@@ -65,7 +65,7 @@ func NewV4Client(grafanaURL string, apiToken string, orgId string, variables url
 	getPanelEndpoint := func(dashName string, vals url.Values) string {
 		return fmt.Sprintf("%s/render/dashboard-solo/db/%s?%s", grafanaURL, dashName, vals.Encode())
 	}
-	return client{grafanaURL, getDashEndpoint, getPanelEndpoint, apiToken, variables, sslCheck, gridLayout}
+	return client{grafanaURL, getDashEndpoint, getPanelEndpoint, apiToken, orgId, variables, sslCheck, gridLayout}
 }
 
 // NewV5Client creates a new Grafana 5 Client. If apiToken is the empty string,
