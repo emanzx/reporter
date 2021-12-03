@@ -51,7 +51,7 @@ func RegisterHandlers(router *mux.Router, reportServerV4, reportServerV5 ServeRe
 
 func (h ServeReportHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	log.Print("Reporter called")
-	g := h.newGrafanaClient(*proto+*ip, apiToken(req), dashVariables(req), *sslCheck, *gridLayout)
+	g := h.newGrafanaClient(*proto+*ip, apiToken(req), orgId(req), dashVariables(req), *sslCheck, *gridLayout)
 	rep := h.newReport(g, dashID(req), time(req), texTemplate(req), *gridLayout)
 
 	file, err := rep.Generate()
