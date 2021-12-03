@@ -34,7 +34,7 @@ import (
 
 // ServeReportHandler interface facilitates testsing the reportServing http handler
 type ServeReportHandler struct {
-	newGrafanaClient func(url string, apiToken string, variables url.Values, sslCheck bool, gridLayout bool) grafana.Client
+	newGrafanaClient func(url string, apiToken string, orgId string, variables url.Values, sslCheck bool, gridLayout bool) grafana.Client
 	newReport        func(g grafana.Client, dashName string, time grafana.TimeRange, texTemplate string, gridLayout bool) report.Report
 }
 
@@ -135,4 +135,10 @@ func texTemplate(r *http.Request) string {
 	}
 
 	return string(customTemplate)
+}
+
+func orgId(r *http.Request) string{
+        orgId := r.URL.Query().Get("orgId")
+        log.Println("Called with Organization ID:", orgId)
+        return orgId
 }
