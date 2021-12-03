@@ -51,11 +51,13 @@ var getPanelRetrySleepTime = time.Duration(10) * time.Second
 // NewV4Client creates a new Grafana 4 Client. If apiToken is the empty string,
 // authorization headers will be omitted from requests.
 // variables are Grafana template variable url values of the form var-{name}={value}, e.g. var-host=dev
-func NewV4Client(grafanaURL string, apiToken string, variables url.Values, sslCheck bool, gridLayout bool) Client {
+func NewV4Client(grafanaURL string, apiToken string, orgId string, variables url.Values, sslCheck bool, gridLayout bool) Client {
 	getDashEndpoint := func(dashName string) string {
 		dashURL := grafanaURL + "/api/dashboards/db/" + dashName
 		if len(variables) > 0 {
-			dashURL = dashURL + "?" + variables.Encode()
+			dashURL = dashURL + "?" + variables.Encode() + "&orgId=" + orgId
+		} else {
+			dashURL = dashURL + "?orgId=" + orgId
 		}
 		return dashURL
 	}
