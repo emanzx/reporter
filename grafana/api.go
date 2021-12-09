@@ -66,7 +66,7 @@ func NewV4Client(grafanaURL string, apiToken string, orgId string, variables url
 	getPanelEndpoint := func(dashName string, vals url.Values, orgId string) string {
 		return fmt.Sprintf("%s/render/dashboard-solo/db/%s?%s&orgId=%s", grafanaURL, dashName, vals.Encode(), orgId)
 	}
-	return client{grafanaURL, getDashEndpoint, getPanelEndpoint, apiToken, variables, orgId, sslCheck, gridLayout}
+	return client{grafanaURL, getDashEndpoint, getPanelEndpoint, apiToken, orgId, variables, sslCheck, gridLayout}
 }
 
 // NewV5Client creates a new Grafana 5 Client. If apiToken is the empty string,
@@ -86,7 +86,7 @@ func NewV5Client(grafanaURL string, apiToken string, orgId string, variables url
 	getPanelEndpoint := func(dashName string, vals url.Values, orgId string) string {
 		return fmt.Sprintf("%s/render/d-solo/%s/_?%s&orgId=%s", grafanaURL, dashName, vals.Encode(), orgId)
 	}
-	return client{grafanaURL, getDashEndpoint, getPanelEndpoint, apiToken, variables, orgId, sslCheck, gridLayout}
+	return client{grafanaURL, getDashEndpoint, getPanelEndpoint, apiToken, orgId, variables, sslCheck, gridLayout}
 }
 
 func (g client) GetDashboard(dashName string) (Dashboard, error) {
