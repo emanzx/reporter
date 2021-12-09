@@ -32,13 +32,13 @@ import (
 // Client is a Grafana API client
 type Client interface {
 	GetDashboard(dashName string) (Dashboard, error)
-	GetPanelPng(p Panel, dashName string, t TimeRange, orgId string) (io.ReadCloser, error)
+	GetPanelPng(p Panel, dashName string, t TimeRange) (io.ReadCloser, error)
 }
 
 type client struct {
 	url              string
 	getDashEndpoint  func(dashName string) string
-	getPanelEndpoint func(dashName string, vals url.Values, orgId string) string
+	getPanelEndpoint func(dashName string, vals url.Values) string
 	apiToken         string
 	orgId            string
     variables        url.Values
