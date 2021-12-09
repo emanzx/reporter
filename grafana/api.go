@@ -80,7 +80,7 @@ func NewV4Client(grafanaURL string, apiToken string, orgId string, timeZone stri
 // NewV5Client creates a new Grafana 5 Client. If apiToken is the empty string,
 // authorization headers will be omitted from requests.
 // variables are Grafana template variable url values of the form var-{name}={value}, e.g. var-host=dev
-func NewV5Client(grafanaURL string, apiToken string, orgId string, variables url.Values, sslCheck bool, gridLayout bool) Client {
+func NewV5Client(grafanaURL string, apiToken string, orgId string, timeZone string, variables url.Values, sslCheck bool, gridLayout bool) Client {
 	getDashEndpoint := func(dashName string) string {
 		dashURL := grafanaURL + "/api/dashboards/uid/" + dashName
 		if len(variables) > 0 {
