@@ -62,7 +62,7 @@ func NewV4Client(grafanaURL string, apiToken string, orgId string, variables url
 		return dashURL
 	}
 
-	getPanelEndpoint := func(dashName string, vals url.Values, orgId string) string {
+	getPanelEndpoint := func(dashName string, vals url.Values) string {
 		return fmt.Sprintf("%s/render/dashboard-solo/db/%s?%s&orgId=%s", grafanaURL, dashName, vals.Encode(), orgId)
 	}
 	return client{grafanaURL, getDashEndpoint, getPanelEndpoint, apiToken, orgId, variables, sslCheck, gridLayout}
@@ -82,7 +82,7 @@ func NewV5Client(grafanaURL string, apiToken string, orgId string, variables url
 		return dashURL
 	}
 
-	getPanelEndpoint := func(dashName string, vals url.Values, orgId string) string {
+	getPanelEndpoint := func(dashName string, vals url.Values) string {
 		return fmt.Sprintf("%s/render/d-solo/%s/_?%s&orgId=%s", grafanaURL, dashName, vals.Encode(), orgId)
 	}
 	return client{grafanaURL, getDashEndpoint, getPanelEndpoint, apiToken, orgId, variables, sslCheck, gridLayout}
@@ -121,8 +121,8 @@ func (g client) GetDashboard(dashName string) (Dashboard, error) {
 	return NewDashboard(body, g.variables), nil
 }
 
-func (g client) GetPanelPng(p Panel, dashName string, t TimeRange, orgId string) (io.ReadCloser, error) {
-	panelURL := g.getPanelURL(p, dashName, t, orgId)
+func (g client) GetPanelPng(p Panel, dashName string, t TimeRange) (io.ReadCloser, error) {
+	panelURL := g.getPanelURL(p, dashName, t)
 
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: !g.sslCheck},
@@ -167,7 +167,7 @@ func (g client) GetPanelPng(p Panel, dashName string, t TimeRange, orgId string)
 	return resp.Body, nil
 }
 
-func (g client) getPanelURL(p Panel, dashName string, t TimeRange, orgId string) string {
+func (g client) getPanelURL(p Panel, dashName string, t TimeRange) string {
 	values := url.Values{}
 	values.Add("theme", "light")
 	values.Add("panelId", strconv.Itoa(p.Id))
@@ -198,7 +198,7 @@ func (g client) getPanelURL(p Panel, dashName string, t TimeRange, orgId string)
 		}
 	}
 
-	url := g.getPanelEndpoint(dashName, values, orgId)
+	url := g.getPanelEndpoint(dashName, values)
 	log.Println("Downloading image ", p.Id, url)
 	return url
 }
