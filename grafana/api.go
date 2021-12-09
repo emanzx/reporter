@@ -168,7 +168,7 @@ func (g client) GetPanelPng(p Panel, dashName string, t TimeRange) (io.ReadClose
 	return resp.Body, nil
 }
 
-func (g client) getPanelURL(p Panel, dashName string, t TimeRange) string {
+func (g client) getPanelURL(p Panel, dashName string, t TimeRange, orgID string) string {
 	values := url.Values{}
 	values.Add("theme", "light")
 	values.Add("panelId", strconv.Itoa(p.Id))
