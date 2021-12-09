@@ -38,7 +38,7 @@ type Client interface {
 type client struct {
 	url              string
 	getDashEndpoint  func(dashName string) string
-	getPanelEndpoint func(dashName string, vals url.Values) string
+	getPanelEndpoint func(dashName string, vals url.Values, orgId string) string
 	apiToken         string
 	orgId            string
     variables        url.Values
