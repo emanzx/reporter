@@ -142,3 +142,9 @@ func orgId(r *http.Request) string{
         log.Println("Called with Organization ID:", orgId)
         return orgId
 }
+
+func timeZone(r *http.Request) string{
+	timeZone := r.URL.Query().Get("tz")
+	log.Println("Called with timezone:", timeZone)
+	return timeZone
+}
