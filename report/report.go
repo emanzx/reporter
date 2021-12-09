@@ -168,7 +168,7 @@ func (rep *report) renderPNGsParallel(dash grafana.Dashboard) error {
 }
 
 func (rep *report) renderPNG(p grafana.Panel) error {
-	body, err := rep.gClient.GetPanelPng(p, rep.dashName, rep.time)
+	body, err := rep.gClient.GetPanelPng(p, rep.dashName, rep.time, orgId)
 	if err != nil {
 		return fmt.Errorf("error getting panel %+v: %v", p, err)
 	}
