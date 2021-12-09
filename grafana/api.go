@@ -32,7 +32,7 @@ import (
 // Client is a Grafana API client
 type Client interface {
 	GetDashboard(dashName string) (Dashboard, error)
-	GetPanelPng(p Panel, dashName string, t TimeRange) (io.ReadCloser, error)
+	GetPanelPng(p Panel, dashName string, t TimeRange, orgId string) (io.ReadCloser, error)
 }
 
 type client struct {
@@ -121,8 +121,8 @@ func (g client) GetDashboard(dashName string) (Dashboard, error) {
 	return NewDashboard(body, g.variables), nil
 }
 
-func (g client) GetPanelPng(p Panel, dashName string, t TimeRange) (io.ReadCloser, error) {
-	panelURL := g.getPanelURL(p, dashName, t)
+func (g client) GetPanelPng(p Panel, dashName string, t TimeRange, orgId string) (io.ReadCloser, error) {
+	panelURL := g.getPanelURL(p, dashName, t, orgId)
 
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: !g.sslCheck},
@@ -167,7 +167,7 @@ func (g client) GetPanelPng(p Panel, dashName string, t TimeRange) (io.ReadClose
 	return resp.Body, nil
 }
 
-func (g client) getPanelURL(p Panel, dashName string, t TimeRange) string {
+func (g client) getPanelURL(p Panel, dashName string, t TimeRange, orgId string) string {
 	values := url.Values{}
 	values.Add("theme", "light")
 	values.Add("panelId", strconv.Itoa(p.Id))
@@ -198,7 +198,7 @@ func (g client) getPanelURL(p Panel, dashName string, t TimeRange) string {
 		}
 	}
 
-	url := g.getPanelEndpoint(dashName, values)
+	url := g.getPanelEndpoint(dashName, values, orgId)
 	log.Println("Downloading image ", p.Id, url)
 	return url
 }
