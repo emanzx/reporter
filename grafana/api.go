@@ -199,7 +199,7 @@ func (g client) getPanelURL(p Panel, dashName string, t TimeRange) string {
 		}
 	}
 
-	url := g.getPanelEndpoint(dashName, values)
+	url := g.getPanelEndpoint(dashName, values, orgId)
 	log.Println("Downloading image ", p.Id, url)
 	return url
 }
