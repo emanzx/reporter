@@ -75,15 +75,20 @@ func NewV5Client(grafanaURL string, apiToken string, orgId string, variables url
 	getDashEndpoint := func(dashName string) string {
 		dashURL := grafanaURL + "/api/dashboards/uid/" + dashName
 		if len(variables) > 0 {
-			dashURL = dashURL + "?" + variables.Encode() + "&orgId=" + orgId
-		} else {
-			dashURL = dashURL + "?orgId=" + orgId
+			dashURL = dashURL + "?" + variables.Encode()
+		}
+		if orgId != nil {
+			dashURL = dashURL + "&orgId=" + orgId
 		}
 		return dashURL
 	}
 
 	getPanelEndpoint := func(dashName string, vals url.Values) string {
-		return fmt.Sprintf("%s/render/d-solo/%s/_?%s&orgId=%s", grafanaURL, dashName, vals.Encode(), orgId)
+		if orgId != nil {
+			return fmt.Sprintf("%s/render/d-solo/%s/_?%s&orgId=%s", grafanaURL, dashName, vals.Encode(), orgId)
+		}else{
+			return fmt.Sprintf("%s/render/d-solo/%s/_?%s", grafanaURL, dashName, vals.Encode())
+		}
 	}
 	return client{grafanaURL, getDashEndpoint, getPanelEndpoint, apiToken, orgId, variables, sslCheck, gridLayout}
 }
