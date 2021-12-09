@@ -38,11 +38,11 @@ type Client interface {
 type client struct {
 	url              string
 	getDashEndpoint  func(dashName string) string
-	getPanelEndpoint func(dashName string, vals url.Values) string
+	getPanelEndpoint func(dashName string, vals url.Values, orgId string) string
 	apiToken         string
 	orgId            string
 	timeZone         string
-        variables        url.Values
+    variables        url.Values
 	sslCheck         bool
 	gridLayout       bool
 }
@@ -86,7 +86,7 @@ func NewV5Client(grafanaURL string, apiToken string, orgId string, variables url
 	getPanelEndpoint := func(dashName string, vals url.Values, orgId string) string {
 		return fmt.Sprintf("%s/render/d-solo/%s/_?%s&orgId=%s", grafanaURL, dashName, vals.Encode(), orgId)
 	}
-	return client{grafanaURL, getDashEndpoint, getPanelEndpoint, apiToken,variables, orgId, sslCheck, gridLayout}
+	return client{grafanaURL, getDashEndpoint, getPanelEndpoint, apiToken, variables, orgId, sslCheck, gridLayout}
 }
 
 func (g client) GetDashboard(dashName string) (Dashboard, error) {
