@@ -34,7 +34,7 @@ import (
 
 // ServeReportHandler interface facilitates testsing the reportServing http handler
 type ServeReportHandler struct {
-	newGrafanaClient func(url string, apiToken string, orgId string, variables url.Values, sslCheck bool, gridLayout bool) grafana.Client
+	newGrafanaClient func(url string, apiToken string, orgId string, timeZone string, variables url.Values, sslCheck bool, gridLayout bool) grafana.Client
 	newReport        func(g grafana.Client, dashName string, time grafana.TimeRange, texTemplate string, gridLayout bool) report.Report
 }
 
@@ -51,7 +51,7 @@ func RegisterHandlers(router *mux.Router, reportServerV4, reportServerV5 ServeRe
 
 func (h ServeReportHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	log.Print("Reporter called")
-	g := h.newGrafanaClient(*proto+*ip, apiToken(req), orgId(req), dashVariables(req), *sslCheck, *gridLayout)
+	g := h.newGrafanaClient(*proto+*ip, apiToken(req), orgId(req), timeZone(req), dashVariables(req), *sslCheck, *gridLayout)
 	rep := h.newReport(g, dashID(req), time(req), texTemplate(req), *gridLayout)
 
 	file, err := rep.Generate()
