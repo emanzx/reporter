@@ -41,6 +41,7 @@ type client struct {
 	getPanelEndpoint func(dashName string, vals url.Values) string
 	apiToken         string
 	orgId            string
+	timeZone         string
     variables        url.Values
 	sslCheck         bool
 	gridLayout       bool
@@ -51,21 +52,29 @@ var getPanelRetrySleepTime = time.Duration(10) * time.Second
 // NewV4Client creates a new Grafana 4 Client. If apiToken is the empty string,
 // authorization headers will be omitted from requests.
 // variables are Grafana template variable url values of the form var-{name}={value}, e.g. var-host=dev
-func NewV4Client(grafanaURL string, apiToken string, orgId string, variables url.Values, sslCheck bool, gridLayout bool) Client {
+func NewV4Client(grafanaURL string, apiToken string, orgId string, timeZone string, variables url.Values, sslCheck bool, gridLayout bool) Client {
 	getDashEndpoint := func(dashName string) string {
 		dashURL := grafanaURL + "/api/dashboards/db/" + dashName
 		if len(variables) > 0 {
-			dashURL = dashURL + "?" + variables.Encode() + "&orgId=" + orgId
-		} else {
-			dashURL = dashURL + "?orgId=" + orgId
+			dashURL = dashURL + "?" + variables.Encode()
+		}
+		if orgId != "" {
+			dashURL = dashURL + "&orgId=" + orgId
 		}
 		return dashURL
 	}
 
 	getPanelEndpoint := func(dashName string, vals url.Values) string {
-		return fmt.Sprintf("%s/render/dashboard-solo/db/%s?%s&orgId=%s", grafanaURL, dashName, vals.Encode(), orgId)
+		renderURL := fmt.Sprintf("%s/render/dashboard-solo/db/%s?%s", grafanaURL, dashName, vals.Encode())
+		if orgId != "" {
+			renderURL = renderURL + "&orgId=" +orgId
+		}
+		if timeZone != "" {
+			renderURL = renderURL + "&tz=" + timeZone
+		}
+		return renderURL
 	}
-	return client{grafanaURL, getDashEndpoint, getPanelEndpoint, apiToken, orgId, variables, sslCheck, gridLayout}
+	return client{grafanaURL, getDashEndpoint, getPanelEndpoint, apiToken, orgId, timeZone, variables, sslCheck, gridLayout}
 }
 
 // NewV5Client creates a new Grafana 5 Client. If apiToken is the empty string,
@@ -84,13 +93,16 @@ func NewV5Client(grafanaURL string, apiToken string, orgId string, variables url
 	}
 
 	getPanelEndpoint := func(dashName string, vals url.Values) string {
+		renderURL := fmt.Sprintf("%s/render/d-solo/%s/_?%s", grafanaURL, dashName, vals.Encode())
 		if orgId != "" {
-			return fmt.Sprintf("%s/render/d-solo/%s/_?%s&orgId=%s", grafanaURL, dashName, vals.Encode(), orgId)
-		}else{
-			return fmt.Sprintf("%s/render/d-solo/%s/_?%s", grafanaURL, dashName, vals.Encode())
+			renderURL = renderURL + "&orgId=" + orgId
 		}
+		if timeZone != "" {
+			renderURL = renderURL + "&tz=" + timeZone
+		}
+		return renderURL
 	}
-	return client{grafanaURL, getDashEndpoint, getPanelEndpoint, apiToken, orgId, variables, sslCheck, gridLayout}
+	return client{grafanaURL, getDashEndpoint, getPanelEndpoint, apiToken, orgId, timeZone, variables, sslCheck, gridLayout}
 }
 
 func (g client) GetDashboard(dashName string) (Dashboard, error) {

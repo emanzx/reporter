@@ -139,12 +139,16 @@ func texTemplate(r *http.Request) string {
 
 func orgId(r *http.Request) string{
         orgId := r.URL.Query().Get("orgId")
-        log.Println("Called with Organization ID:", orgId)
+		if orgId != "" {
+        	log.Println("Called with Organization ID:", orgId)
+		}
         return orgId
 }
 
 func timeZone(r *http.Request) string{
 	timeZone := r.URL.Query().Get("tz")
-	log.Println("Called with timezone:", timeZone)
+	if timeZone != "" {
+		log.Println("Called with timezone:", timeZone)
+	}
 	return timeZone
 }
